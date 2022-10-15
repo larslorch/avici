@@ -1,0 +1,64 @@
+---
+n_vars: 30
+n_datasets: 100
+data:
+  evaluation:
+    - n_observations_obs: 2000
+      n_observations_int: 1000
+
+      g:
+        - __func__: scale_free_inv
+          edges_per_var: [ 2 ]
+          power: [ 0.5, 1.5 ]
+
+        - __func__: watts_strogatz
+          dim: [ 2, 3 ]
+          nei: [ 1 ]
+          p: [ 0.3 ]
+
+        - __func__: sbm
+          edges_per_var: [ 2 ]
+          n_blocks: [ 5, 10 ]
+          damp: [ 0.1 ]
+
+        - __func__: grg
+          radius: [ 0.1 ]
+
+      mechanism:
+        - __func__: rff_additive
+
+          length_scale:
+            - __func__: uniform
+              low: 5.0
+              high: 8.0
+            - __func__: uniform
+              low: 8.0
+              high: 12.0
+
+          output_scale:
+            - __func__: uniform
+              low: 8.0
+              high: 12.0
+            - __func__: uniform
+              low: 18.0
+              high: 22.0
+
+          bias:
+            - __func__: uniform
+              low: -3.0
+              high: 3.0
+              
+          noise:
+            - __func__: laplace
+            - __func__: cauchy
+
+          noise_scale_heteroscedastic:
+            - rff:
+              length_scale: 10.0
+              output_scale: 2.0
+
+          n_interv_vars: 15
+          interv_dist:
+            - __func__: signed_uniform
+              low:  1.0
+              high: 5.0

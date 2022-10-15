@@ -1,3 +1,25 @@
+# git cannot parse exceptions if not adding the * to data/*
+!cdt-source/cdt/data/
+avici/sergio/data_sets/*
+.DS_Store
+results/
+checkpoints/*
+.vscode
+.idea/
+lsf.o*
+slurm*
+*.out
+*.pkl
+*.prof
+*.pdf
+*.csv
+*.zip
+real_data/sachs/*
+real_data/sachs_dcdi/*
+
+euler.txt
+train_data/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -1,0 +1,43 @@
+---
+# TEST/DEBUGGING CONFIG
+n_vars: 6
+n_datasets: 1
+data:
+  evaluation:
+    - n_observations_obs: 100
+      n_observations_int: 50
+
+      g:
+        - __func__: ecoli
+          topk: 0.2
+
+        - __func__: yeast
+          topk: 0.2
+
+      mechanism:
+        - __func__: linear_additive
+
+          param:
+            - __func__: signed_uniform
+              low: 0.5
+              high: 2.0
+
+          bias:
+            - __func__: signed_uniform
+              low: 0.0
+              high: 2.0
+
+          noise:
+            - __func__: laplace
+            - __func__: cauchy
+
+          noise_scale_heteroscedastic:
+            - rff:
+              length_scale: 10.0
+              output_scale: 2.0
+
+          n_interv_vars: -1
+          interv_dist:
+            - __func__: signed_uniform
+              low:  1.0
+              high: 5.0

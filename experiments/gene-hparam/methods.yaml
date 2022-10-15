@@ -1,0 +1,88 @@
+---
+__grid__:
+
+pc:
+  ci_test: [ gaussian, hsic_gamma ]
+  ci_alpha: [ 0.01, 0.001, 0.0001 ]
+  __run__:
+    n_cpus: 4
+    n_gpus: 0
+    length: long
+
+ges:
+  __run__:
+    n_cpus: 2
+    n_gpus: 0
+    length: short
+
+lingam:
+  __run__:
+    n_cpus: 2
+    n_gpus: 0
+    length: short
+
+daggnn:
+  k_max_iter: 100
+  epochs: 300
+  batch_size: 100
+  graph_threshold: [ 0.1, 0.2, 0.3 ]
+  hidden_dim: [ 16, 64 ]
+  __run__:
+    n_cpus: 4
+    n_gpus: 0
+    length: short
+
+gies:
+  __run__:
+    n_cpus: 2
+    n_gpus: 0
+    length: short
+
+igsp:
+  alpha: [ 0.01, 0.001, 0.0001 ]
+  ci_test: [ gaussian, hsic ]
+  rank_fail_add: 0.0001
+  rank_check_tol: 0.000001
+  __run__:
+    n_cpus: 2
+    n_gpus: 0
+    length: short
+
+dcdi:
+  model: DCDI-G
+  num_layers: 1
+  hid_dim: [ 8, 32 ]
+  train_batch_size: 64
+  num_train_iter: 1000000
+  reg_coeff: [ 0.01, 0.1, 1.0 ]
+  __run__:
+    n_cpus: 4
+    n_gpus: 0
+    length: long
+
+dibs:
+  likelihood: nn
+  dibs_plus: true
+
+  n_particles: 10
+  steps: 3000
+  obs_noise: 1.0
+  h_latent: [ 3.0, 10.0, 30.0 ]
+  h_theta: [ 30.0, 300.0, 3000.0 ]
+
+  __run__:
+    n_cpus: 4
+    n_gpus: 0
+    length: long
+
+grandag:
+  lr: 0.001
+  num_layers: 1
+  hid_dim: [ 8, 32 ]
+  prune: [ 0.001, 0.00001 ]
+  pns_thresh: [ 0.5, 2.0 ]
+
+  __run__:
+    n_cpus: 4
+    n_gpus: 0
+    length: long

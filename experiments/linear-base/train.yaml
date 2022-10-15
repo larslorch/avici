@@ -1,0 +1,139 @@
+---
+train_n_vars: [2, 5, 10, 20, 30, 40, 50]
+test_n_vars: [20, 100]
+test_n_datasets: 25
+data:
+  train:
+    - n_observations_obs: 600
+      n_observations_int: 200
+
+      g:
+        - __func__: scale_free
+          edges_per_var: [ 1, 2, 3 ]
+          power: [ 1.0 ]
+        - __func__: scale_free_inv
+          edges_per_var: [ 1, 2, 3 ]
+          power: [ 1.0 ]
+        - __func__: erdos_renyi
+          edges_per_var: [ 1.0, 2.0, 3.0 ]
+
+      mechanism:
+        - __func__: linear_additive
+
+          param:
+            - __func__: signed_uniform
+              low: 1.0
+              high: 3.0
+
+          bias:
+            - __func__: uniform
+              low: -3.0
+              high: 3.0
+              
+          noise:
+            - __func__: gaussian
+
+          noise_scale:
+            - __func__: uniform
+              low: 0.2
+              high: 2.0
+
+          n_interv_vars: -1
+          interv_dist:
+            - __func__: signed_uniform
+              low:  1.0
+              high: 3.0
+
+  test:train:
+    - n_observations_obs: 500
+      n_observations_int: 500
+
+      g:
+        - __func__: scale_free
+          edges_per_var: [ 1, 2, 3 ]
+          power: [ 1.0 ]
+        - __func__: scale_free_inv
+          edges_per_var: [ 1, 2, 3 ]
+          power: [ 1.0 ]
+        - __func__: erdos_renyi
+          edges_per_var: [ 1.0, 2.0, 3.0 ]
+
+      mechanism:
+        - __func__: linear_additive
+
+          param:
+            - __func__: signed_uniform
+              low: 1.0
+              high: 3.0
+
+          bias:
+            - __func__: uniform
+              low: -3.0
+              high: 3.0
+              
+          noise:
+            - __func__: gaussian
+
+          noise_scale:
+            - __func__: uniform
+              low: 0.2
+              high: 2.0
+
+          n_interv_vars: -1
+          interv_dist:
+            - __func__: signed_uniform
+              low:  1.0
+              high: 3.0
+
+  test:ood:
+    - n_observations_obs: 500
+      n_observations_int: 500
+
+      g:
+        - __func__: scale_free_inv
+          edges_per_var: [ 2 ]
+          power: [ 0.5, 1.5 ]
+
+        - __func__: watts_strogatz
+          dim: [ 2, 3 ]
+          nei: [ 1 ]
+          p: [ 0.3 ]
+
+        - __func__: sbm
+          edges_per_var: [ 2 ]
+          n_blocks: [ 5, 10 ]
+          damp: [ 0.1 ]
+
+        - __func__: grg
+          radius: [ 0.1 ]
+
+      mechanism:
+        - __func__: linear_additive
+
+          param:
+            - __func__: signed_uniform
+              low: 0.5
+              high: 2.0
+            - __func__: signed_uniform
+              low: 2.0
+              high: 4.0
+
+          bias:
+            - __func__: uniform
+              low: -3.0
+              high: 3.0
+
+          noise:
+            - __func__: laplace
+            - __func__: cauchy
+
+          noise_scale_heteroscedastic:
+            - rff:
+              length_scale: 10.0
+              output_scale: 2.0
+
+          n_interv_vars: 15
+          interv_dist:
+            - __func__: signed_uniform
+              low:  1.0
+              high: 5.0

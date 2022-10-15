@@ -1,0 +1,44 @@
+---
+# TEST/DEBUGGING CONFIG
+train_n_vars: [5, 6]
+test_n_vars: [10]
+data:
+  train:
+    - n_observations_obs: 44
+      n_observations_int: 22
+
+      g:
+        - __func__: erdos_renyi
+          edges_per_var: [ 2.0 ]
+
+      mechanism:
+        - __func__: rff_additive
+
+          length_scale:
+            - __func__: uniform
+              low: 5.0
+              high: 10.0
+
+          output_scale:
+            - __func__: uniform
+              low: 10.0
+              high: 20.0
+
+          bias:
+            - __func__: uniform
+              low: -3.0
+              high: 3.0
+              
+          noise:
+            - __func__: cauchy
+
+          noise_scale_heteroscedastic:
+            - rff:
+              length_scale: 10.0
+              output_scale: 2.0
+
+          n_interv_vars: -1
+          interv_dist:
+            - __func__: signed_uniform
+              low: 1.0
+              high: 5.0

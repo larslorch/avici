@@ -1,0 +1,14 @@
+---
+# TEST/DEBUGGING CONFIG
+ours:
+  n_steps: 50
+  checkpoint_every: 10
+
+  __train__:
+    n_cpus: 8
+
+  __run__:
+    n_cpus: 8
+
+  #__checkpoint__: "/path/to/checkpoint1"
+

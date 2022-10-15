@@ -1,0 +1,16 @@
+name: avici
+channels:
+- conda-forge
+- defaults
+dependencies:
+- conda
+- r-base=4.2.1
+- python=3.10.6
+- jaxlib=0.3.14 # jax installed via pip (Apple silicon compatibility)
+- tensorflow=2.9.1
+- pip
+- pip:
+  - -r ./requirements.txt
+  - -e . # this repo
+  - -e ./cdt-source/
+  - -e ./dibs-source/

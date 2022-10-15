@@ -1,0 +1,45 @@
+---
+n_vars: 30
+n_datasets: 15
+data:
+  evaluation:
+    - n_observations_obs: 2000
+      n_observations_int: 1000
+
+      g:
+        - __func__: ecoli
+          topk: 0.2
+
+        - __func__: yeast
+          topk: 0.2
+
+      mechanism:
+        - __func__: kosergio_noisy_count
+          tech_noise_config: [ illumina, drop-seq, smart-seq ]
+          cell_types:
+            __func__: randint
+            low: 10
+            high: 10
+          decays: [ 0.5, 1.5 ]
+          noise_params: [ 0.5, 1.5 ]
+          b:
+            - __func__: uniform
+              low: 0.5
+              high: 2.0
+            - __func__: uniform
+              low: 2.0
+              high: 4.0
+          k_param:
+            - __func__: uniform
+              low: 1.0
+              high: 3.0
+            - __func__: uniform
+              low: 3.0
+              high: 7.0
+          k_sign_p:
+            - __func__: beta
+              a: 0.2588
+              b: 0.2499
+          hill: [ 1.5, 2.5 ]
+
+          n_ko_genes: -1

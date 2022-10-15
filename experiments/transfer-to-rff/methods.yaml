@@ -1,0 +1,14 @@
+---
+ours__linear:
+  __checkpoint__: "/cluster/project/infk/krause/llorch/avici/checkpoints/final/linear"
+  __run__:
+    n_cpus: 8
+    n_gpus: 0
+    length: short
+
+ours__rff:
+  __checkpoint__: "/cluster/project/infk/krause/llorch/avici/checkpoints/final/rff"
+  __run__:
+    n_cpus: 8
+    n_gpus: 0
+    length: short

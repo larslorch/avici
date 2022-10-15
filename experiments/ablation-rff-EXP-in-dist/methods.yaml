@@ -1,0 +1,57 @@
+---
+ours__base:
+  __checkpoint__: "/cluster/project/infk/krause/llorch/avici/checkpoints/final/rff"
+  __run__:
+    n_cpus: 8
+    n_gpus: 0
+    length: short
+
+ours__blocks=1:
+  __checkpoint__: "/cluster/project/infk/krause/llorch/avici/checkpoints/final-ablation/rff-blocks-1"
+  __run__:
+    n_cpus: 8
+    n_gpus: 0
+    length: short
+
+ours__blocks=2:
+  __checkpoint__: "/cluster/project/infk/krause/llorch/avici/checkpoints/final-ablation/rff-blocks-2"
+  __run__:
+    n_cpus: 8
+    n_gpus: 0
+    length: short
+
+ours__blocks=4:
+  __checkpoint__: "/cluster/project/infk/krause/llorch/avici/checkpoints/final-ablation/rff-blocks-4"
+  __run__:
+    n_cpus: 8
+    n_gpus: 0
+    length: short
+
+ours__axis=n:
+  __checkpoint__: "/cluster/project/infk/krause/llorch/avici/checkpoints/final-ablation/rff-axis-n"
+  __run__:
+    n_cpus: 8
+    n_gpus: 0
+    length: short
+
+ours__axis=d:
+  __checkpoint__: "/cluster/project/infk/krause/llorch/avici/checkpoints/final-ablation/rff-axis-d"
+  __run__:
+    n_cpus: 8
+    n_gpus: 0
+    length: short
+
+ours__relational:
+  __checkpoint__: "/cluster/project/infk/krause/llorch/avici/checkpoints/final-ablation/rff-relational"
+  __run__:
+    n_cpus: 8
+    n_gpus: 0
+    length: short
+
+ours__steps=100k:
+  __checkpoint__: "/cluster/project/infk/krause/llorch/avici/checkpoints/final-ablation/rff-steps-100"
+  __run__:
+    n_cpus: 8
+    n_gpus: 0
+    length: short
+

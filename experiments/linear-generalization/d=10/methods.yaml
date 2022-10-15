@@ -1,0 +1,10 @@
+---
+__grid__:
+
+ours:
+  lim_n_obs: [ 30, 100, 300, 1000]
+  __checkpoint__: "/cluster/project/infk/krause/llorch/avici/checkpoints/final/linear"
+  __run__:
+    n_cpus: 8
+    n_gpus: 0
+    length: short

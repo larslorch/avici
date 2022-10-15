@@ -1,0 +1,31 @@
+from setuptools import setup, find_packages
+setup(
+    name='avici',
+    version='1.0',
+    packages=find_packages(),
+    install_requires=[
+        'jax>=0.2.8',
+        'jaxlib>=0.1.59',
+        'dm-haiku>=0.0.8',
+        'imageio==2.9.0',
+        'jupyter==1.0.0',
+        'matplotlib==3.3.3',
+        'networkx==2.5',
+        'numpy>=1.18',
+        'pandas==1.1.4',
+        'python-igraph==0.9.8',
+        'scikit-learn==1.0.2',
+        'sklearn==0.0',
+        'tqdm==4.46.0',
+        'dm-haiku==0.0.8',
+        'psutil==5.9.2',
+        'optax>=0.0.9',
+        'pyarrow==7.0.0',
+        'seaborn==0.12.0',
+        'tensorflow-datasets~=4.3.0',
+        'wandb>=0.12.2',
+        'deepdiff==5.8.1',
+        'torch==1.11.0',
+        'causaldag==0.1a163',
+    ]
+)

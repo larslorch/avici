@@ -1,0 +1,45 @@
+---
+ours:
+  nn: BaseModel
+  n_loc: 8
+  widening_factor: 4
+  SAB_num_heads: 8
+  key_size: 32
+  dim: 128
+  mixture_k: 1
+  mixture_drop: 0.0
+  cosine_sim: true
+
+  optimizer: lamb
+  loss: xent
+  n_steps: 300000
+  lr: 0.00003
+  schedule: piecewise_const_200k_300k
+  curriculum: equal-nvars
+  dropout_rate: 0.1
+
+  acyc: dual
+  acyc_dual_lr: 0.0001
+  acyc_warmup: true
+  acyc_burnin: 50000
+  acyc_inner_step: 500
+  mask_diag: true
+
+  buffer_size: 200
+  train_n_obs: 150
+  train_n_int: 50
+  p_obs_only: 0.5
+  bsu: 300
+
+  checkpoint_every: 10000
+
+  __train__:
+    n_cpus: 128
+    n_gpus: 8
+    gpu_model: [ NVIDIATITANRTX , QuadroRTX6000 ]
+    length: long
+
+  __run__:
+    n_cpus: 8
+    n_gpus: 0
+    length: short

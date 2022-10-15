@@ -1,0 +1,8 @@
+---
+
+ours:
+  __checkpoint__: "/cluster/project/infk/krause/llorch/avici/checkpoints/final/gene"
+  __run__:
+    n_cpus: 8
+    n_gpus: 0
+    length: short

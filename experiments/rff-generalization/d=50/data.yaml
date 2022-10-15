@@ -1,0 +1,49 @@
+---
+n_vars: 50
+n_datasets: 15
+data:
+  evaluation:
+    - n_observations_obs: 2000
+      n_observations_int: 1000
+
+      g:
+        - __func__: scale_free
+          edges_per_var: [ 1, 2, 3 ]
+          power: [ 1.0 ]
+        - __func__: scale_free_inv
+          edges_per_var: [ 1, 2, 3 ]
+          power: [ 1.0 ]
+        - __func__: erdos_renyi
+          edges_per_var: [ 1.0, 2.0, 3.0 ]
+
+      mechanism:
+        - __func__: rff_additive
+
+          length_scale:
+            - __func__: uniform
+              low: 7.0
+              high: 10.0
+
+          output_scale:
+            - __func__: uniform
+              low: 10.0
+              high: 20.0
+
+          bias:
+            - __func__: uniform
+              low: -3.0
+              high: 3.0
+
+          noise:
+            - __func__: gaussian
+
+          noise_scale:
+            - __func__: uniform
+              low: 0.2
+              high: 2.0
+
+          n_interv_vars: 25
+          interv_dist:
+            - __func__: signed_uniform
+              low:  1.0
+              high: 3.0

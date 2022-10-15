@@ -1,0 +1,81 @@
+---
+pc:
+  ci_test: gaussian
+  ci_alpha: 0.01
+  __run__:
+    n_cpus: 4
+    n_gpus: 0
+    length: long
+
+ges:
+  __run__:
+    n_cpus: 4
+    n_gpus: 0
+    length: short
+
+lingam:
+  __run__:
+    n_cpus: 4
+    n_gpus: 0
+    length: short
+
+daggnn:
+  k_max_iter: 100
+  epochs: 300
+  batch_size: 100
+  graph_threshold: 0.1
+  hidden_dim: 64
+  __run__:
+    n_cpus: 4
+    n_gpus: 0
+    length: short
+
+grandag:
+  lr: 0.001
+  num_layers: 1
+  hid_dim: 32
+  prune: 0.001
+  pns_thresh: 0.5
+  __run__:
+    n_cpus: 4
+    n_gpus: 0
+    length: long
+
+gies:
+  __run__:
+    n_cpus: 4
+    n_gpus: 0
+    length: short
+
+igsp:
+  alpha: 0.01
+  alpha_inv: 0.01
+  ci_test: gaussian
+  rank_fail_add: 0.0001
+  rank_check_tol: 0.000001
+  __run__:
+    n_cpus: 8
+    n_gpus: 0
+    mem: 12500
+    length: long
+
+dcdi:
+  model: DCDI-G
+  num_layers: 1
+  hid_dim: 8
+  train_batch_size: 64
+  num_train_iter: 1000000
+  reg_coeff: 1.0
+  use_gpu: true
+  __run__:
+    n_cpus: 4
+    n_gpus: 1
+    length: long
+
+ours:
+  __checkpoint__: "/cluster/project/infk/krause/llorch/avici/checkpoints/final/gene"
+  __run__:
+    n_cpus: 8
+    n_gpus: 0
+    length: short
+
