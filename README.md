@@ -91,7 +91,7 @@ we provide an extended README together with a corresponding implementation
 that illustrates a detailed example of how to train an AVICI model
 for a custom data-generating process.
 
-In short, we provide the following three components for training a full model:
+In short, the following three components are needed for training a full model:
 
 1. `func.py`: **(Optional) Python file defining custom data-generating processes**
 

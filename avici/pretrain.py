@@ -168,12 +168,13 @@ class AVICIModel:
         return out
 
 
-def load_pretrained(download=None, checkpoint_dir=None, cache_path=None, expects_counts=None):
+def load_pretrained(download=None, force_download=False, checkpoint_dir=None, cache_path=None, expects_counts=None):
     """
     Loads a pretrained AVICI model
 
     Args:
         download (str, optional): Specifier for existing pretrained model checkpoint to be downloaded (online)
+        force_download (bool, optional): Whether to force re-download of model checkpoint specified via `download`
         checkpoint_dir (str, optional): Path to model checkpoint (offline)
         cache_path (str, optional): Path used as cache directory for storing the model checkpoint (Default: `avici/tmp`)
         expects_counts (bool, optional): Whether model expects count data, for data standardization purposes.
@@ -206,6 +207,10 @@ def load_pretrained(download=None, checkpoint_dir=None, cache_path=None, expects
         model_path = Path(cache_path) / f"checkpt_{download}"
 
         if not (model_path.exists() and model_path.is_dir() and len(list(model_path.iterdir()))):
+            download_from_figshare(domain=download, figshare_id=figshare_id, model_path=model_path)
+        elif force_download:
+            shutil.rmtree(model_path)
+            print(f"Removing previously downloaded checkpoint at: `{model_path}`")
             download_from_figshare(domain=download, figshare_id=figshare_id, model_path=model_path)
         else:
             print(f"Using downloaded checkpoint at: `{model_path}`")

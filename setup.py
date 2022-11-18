@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name='avici',
-    version='1.0.0',
+    version='1.0.1',
     description='Amortized Inference for Causal Structure Learning',
     author='Lars Lorch',
     author_email='lars.lorch@inf.ethz.ch',
