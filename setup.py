@@ -12,6 +12,14 @@ setup(
         "Operating System :: OS Independent",
     ],
     packages=find_packages(),
+    package_data={
+        'avici': [
+            'assets/*.tsv',
+            'config/examples/*.yaml',
+            'config/train/*.yaml',
+            'synthetic/sergio/*.yaml',
+        ],
+    },
     install_requires=[
         'jax>=0.3.17',
         'jaxlib>=0.3.14',

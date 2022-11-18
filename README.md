@@ -126,7 +126,7 @@ as explained above.
 For custom installations, we recommend using `conda` and generating 
 a new environment via
 ```
-conda env create --file environment.yml
+conda env create --file environment.yaml
 ```
 You then need to install the `avici` package with
 ```
@@ -134,11 +134,11 @@ pip install -e .
 ```
 #### Note to Apple Silicon/M1 chip users:
 Installing the package by first setting up a conda environment
-using our conda `environment.yml` config and then installing
+using our conda `environment.yaml` config and then installing
 `pip install -r requirements.txt` before finally running
 `pip install -e .` works on Apple M1 MacBooks.
-Directly installing `avici` via PyPI may install versions of
-package requirements that may cause unexpected, low-level errors.
+Directly installing `avici` via PyPI may install incompatible versions 
+or builds of package requirements, which may cause unexpected, low-level errors.
 
 #### Reproducibility branch
 In addition to `main`, this repository also contains a `full` 
