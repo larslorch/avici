@@ -1,0 +1,60 @@
+---
+# Noise config parameters used by SERGIO paper as estimated from real single-cell data
+# https://ars.els-cdn.com/content/image/1-s2.0-S2405471220302878-mmc1.pdf
+
+10x-chromium:
+  # outlier genes
+  outlier_prob: [ 0.01, 0.01, 0.01 ]
+  outlier_mean: [ 3.0, 3.0, 5.0 ]
+  outlier_scale: [ 1.0, 1.0, 1.0 ]
+
+  # library size
+  lib_size_mean: [ 6.0, 6.0, 4.5 ]
+  lib_size_scale: [ 0.3, 0.4, 0.7 ]
+
+  # dropout
+  dropout_shape: [ 8, 8, 8 ]
+  dropout_percentile: [ 74, 82 , 45]
+
+illumina:
+  # outlier genes
+  outlier_prob: [ 0.01 ]
+  outlier_mean: [ 0.8 ]
+  outlier_scale: [ 1.0 ]
+
+  # library size
+  lib_size_mean: [ 7.0 ]
+  lib_size_scale: [ 0.4 ]
+
+  # dropout
+  dropout_shape: [ 8 ]
+  dropout_percentile: [ 80 ]
+
+drop-seq:
+  # outlier genes
+  outlier_prob: [ 0.01 ]
+  outlier_mean: [ 3.0 ]
+  outlier_scale: [ 1.0 ]
+
+  # library size
+  lib_size_mean: [ 4.4 ]
+  lib_size_scale: [ 0.8 ]
+
+  # dropout
+  dropout_shape: [ 8 ]
+  dropout_percentile: [ 85 ]
+
+smart-seq:
+  # outlier genes
+  outlier_prob: [ 0.01 ]
+  outlier_mean: [ 4.5 ]
+  outlier_scale: [ 1.0 ]
+
+  # library size
+  lib_size_mean: [ 10.8 ]
+  lib_size_scale: [ 0.55 ]
+
+  # dropout
+  dropout_shape: [ 2 ]
+  dropout_percentile: [ 92 ]
+

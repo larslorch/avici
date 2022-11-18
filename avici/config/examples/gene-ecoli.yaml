@@ -1,0 +1,39 @@
+---
+data:
+  - n_observations_obs: null
+    n_observations_int: null
+
+    graph:
+      - __class__: Ecoli
+        topk: 0.2
+
+    mechanism:
+      - __class__: GRNSergio
+        add_outlier_effect: true
+        add_lib_size_effect: true
+        add_dropout_effect: true
+        return_count_data: true
+
+        tech_noise_config: [ illumina, drop-seq, smart-seq ]
+
+        cell_types:
+          __class__: RandInt
+          low: 10
+          high: 10
+        decays: 1.0
+        noise_params: 1.0
+        b:
+          - __class__: Uniform
+            low: 1.0
+            high: 3.0
+        k_param:
+          - __class__: Uniform
+            low: 1.0
+            high: 5.0
+        k_sign_p:
+          - __class__: Beta
+            a: 0.5
+            b: 0.5
+        hill: 2.0
+
+        n_ko_genes: -1

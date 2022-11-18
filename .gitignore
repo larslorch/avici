@@ -1,3 +1,21 @@
+tmp/
+
+# git cannot parse exceptions if not adding the * to data/*
+.DS_Store
+results/
+checkpoints/*
+.vscode
+.idea/
+lsf.o*
+slurm*
+*.out
+*.pkl
+*.prof
+*.pdf
+*.csv
+*.zip
+*.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

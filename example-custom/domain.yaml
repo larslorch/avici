@@ -1,0 +1,44 @@
+---
+train_n_vars: [5, 10]
+test_n_vars: [20]
+test_n_datasets: 10
+additional_modules:
+  - "./func.py"
+data:
+  - n_observations_obs: 300
+    n_observations_int: 100
+
+    graph:
+      - __class__: RandomTree
+
+    mechanism:
+      - __class__: SinusoidalAdditive
+
+        weight:
+          - __class__: SignedUniform
+            low: 1.0
+            high: 3.0
+
+        scale:
+          - __class__: SignedUniform
+            low: 1.0
+            high: 3.0
+
+        bias:
+          - __class__: Uniform
+            low: -3.0
+            high: 3.0
+
+        noise:
+          - __class__: Gaussian
+
+        noise_scale:
+          - __class__: Uniform
+            low: 0.2
+            high: 1.0
+
+        n_interv_vars: -1
+        interv_dist:
+          - __class__: SignedUniform
+            low:  1.0
+            high: 3.0
