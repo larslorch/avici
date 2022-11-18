@@ -116,7 +116,7 @@ model = avici.load_pretrained(checkpoint_dir="path/to/checkpoint", expects_count
 ```
 
 
-## Custom Installation and Branches
+## Custom Installation and Branches (Apple Silicon)
 
 When using `avici` for your research and applications, we recommend using
 the easy-to-use `main` branch and installing the latest stable
@@ -132,8 +132,18 @@ You then need to install the `avici` package with
 ```
 pip install -e .
 ```
+#### Note to Apple Silicon/M1 chip users:
+Installing the package by first setting up a conda environment
+using our conda `environment.yml` config and then installing
+`pip install -r requirements.txt` before finally running
+`pip install -e .` works on Apple M1 MacBooks.
+Directly installing `avici` via PyPI may install versions of
+package requirements that may cause unexpected, low-level errors.
 
-In addition to `main`, this repository also contains a `full` branch, which contains
+#### Reproducibility branch
+In addition to `main`, this repository also contains a `full` 
+[branch](https://github.com/larslorch/avici/tree/full), 
+which contains
 comprehensive code for reproducing the the experimental results in 
 [Lorch et al., (2022)](https://arxiv.org/abs/2205.12934). 
 The purpose of `full` is reproducibility; the branch is not 

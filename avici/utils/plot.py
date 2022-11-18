@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def visualize(mat, true=None, size=0.5):
+def visualize(mat, true=None, size=0.75):
     size = np.sqrt(mat.shape[-1]) * size
     plt.rcParams['figure.figsize'] = [size if true is None else 2 * size, size]
     if true is None:
