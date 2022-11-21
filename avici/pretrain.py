@@ -14,8 +14,7 @@ from avici.model import BaseModel, InferenceModel
 from avici.utils.load import load_checkpoint
 from avici.utils.figshare import Figshare
 from avici.utils.data_jax import jax_standardize_default_simple, jax_standardize_count_simple
-from avici.definitions import ROOT_DIR, CACHE_SUBDIR, \
-    MODEL_LINEAR_FIGSHARE_ID, MODEL_RFF_FIGSHARE_ID, MODEL_GENE_FIGSHARE_ID
+from avici.definitions import CACHE_SUBDIR, MODEL_LINEAR_FIGSHARE_ID, MODEL_RFF_FIGSHARE_ID, MODEL_GENE_FIGSHARE_ID
 
 
 class ProgressBar:
@@ -168,7 +167,8 @@ class AVICIModel:
         return out
 
 
-def load_pretrained(download=None, force_download=False, checkpoint_dir=None, cache_path=None, expects_counts=None):
+def load_pretrained(download=None, force_download=False, checkpoint_dir=None, cache_path="./", expects_counts=None,
+                    verbose=True):
     """
     Loads a pretrained AVICI model
 
@@ -176,9 +176,11 @@ def load_pretrained(download=None, force_download=False, checkpoint_dir=None, ca
         download (str, optional): Specifier for existing pretrained model checkpoint to be downloaded (online)
         force_download (bool, optional): Whether to force re-download of model checkpoint specified via `download`
         checkpoint_dir (str, optional): Path to model checkpoint (offline)
-        cache_path (str, optional): Path used as cache directory for storing the model checkpoint (Default: `avici/tmp`)
+        cache_path (str, optional): Path used as cache directory for storing the
+            downloaded model checkpoints (Default: `avici/tmp`)
         expects_counts (bool, optional): Whether model expects count data, for data standardization purposes.
             Required when providing `checkpoint_dir`.
+        verbose (bool, optional): Whether to print path information
 
     Returns:
         `avici.AVICIModel`
@@ -201,19 +203,27 @@ def load_pretrained(download=None, force_download=False, checkpoint_dir=None, ca
             raise ValueError(f"Unknown download specified: `{download}`")
 
         # download source if not yet downloaded
-        if cache_path is None:
-            cache_path = ROOT_DIR / CACHE_SUBDIR
+        if cache_path == "./":
+            try:
+                cache_path = Path(cache_path).resolve() / CACHE_SUBDIR
+            except FileNotFoundError:
+                raise FileNotFoundError("Could not resolve default cache_path `./` for downloads. "
+                                        "Please specify the download location by specifying `cache_path`")
+            if verbose:
+                print(f"Using default cache_path: `{cache_path}`")
 
-        model_path = Path(cache_path) / f"checkpt_{download}"
+        model_path = Path(cache_path) / f"checkpoint_{download}"
 
         if not (model_path.exists() and model_path.is_dir() and len(list(model_path.iterdir()))):
             download_from_figshare(domain=download, figshare_id=figshare_id, model_path=model_path)
         elif force_download:
             shutil.rmtree(model_path)
-            print(f"Removing previously downloaded checkpoint at: `{model_path}`")
+            if verbose:
+                print(f"Removing previously downloaded checkpoint at: `{model_path}`")
             download_from_figshare(domain=download, figshare_id=figshare_id, model_path=model_path)
         else:
-            print(f"Using downloaded checkpoint at: `{model_path}`")
+            if verbose:
+                print(f"Using downloaded checkpoint at: `{model_path}`")
 
     else:
         assert expects_counts is not None, "When loading custom model checkpoint, need to specify `expects_counts` as "\

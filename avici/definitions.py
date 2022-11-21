@@ -11,7 +11,7 @@ PROJECT_DIR = Path(__file__).parents[1]
 
 CHECKPOINT_SUBDIR = "checkpoints"
 ASSETS_SUBDIR = "assets"
-CACHE_SUBDIR = "tmp"
+CACHE_SUBDIR = "cache"
 SERGIO_NOISE_CONFIG = ROOT_DIR / "synthetic/sergio/noise_config.yaml"
 
 # real data
