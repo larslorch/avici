@@ -188,8 +188,9 @@ def load_data_config(path, force_kwargs=None, abspath=False, module_paths=None, 
     spec["data"]["train"] = list(cartesian_dict(config["data"]))
     spec["data"]["val"] = list(cartesian_dict(config["data"]))
 
-    if len(spec['data']["train"]) >= 1000:
-        warnings.warn(f"config defines {len(spec['data'])} generative models")
+    for k in spec["data"].keys():
+        if len(spec["data"][k]) >= 1000:
+            warnings.warn(f"{k} config defines {len(spec['data'][k])} generative models")
 
     # init functions in spec
     spec = _parse_config_tree(spec, force_kwargs=force_kwargs, module_paths=additional_paths)

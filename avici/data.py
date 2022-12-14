@@ -386,9 +386,6 @@ class AsyncBufferDataset:
             batch_dims = self.batch_dims_train[n_vars]["device"] if is_train else self.batch_dims_test[n_vars]["device"]
             ds[n_vars] = self._make_dataset(buffer, is_train=is_train, batch_dims=batch_dims)
 
-            # if not is_train:
-            #     self._dump_test_data(descr, n_vars, buffer)
-
         return ds
 
     def make_test_datasets(self):
