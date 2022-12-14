@@ -36,7 +36,7 @@ from avici import simulate_data
 
 # g: [d, d] causal graph of `d` variables
 # x: [n, d] data matrix containing `n` observations of the `d` variables
-g, x = simulate_data(n=100, d=20, domain="linear-gaussian-scm")
+g, x = simulate_data(d=50, n=200, domain="linear-gaussian-scm")
 
 # load pretrained model
 model = avici.load_pretrained(download="linear")
