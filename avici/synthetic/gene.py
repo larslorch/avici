@@ -121,8 +121,7 @@ class GRNSergio(MechanismModel):
         simulate_interv_data = n_observations_int > 0
         if simulate_interv_data:
             assert self.n_ko_genes != 0, f"Need n_ko_genes != 0 to have interventional data for SERGIO"
-            if self.n_ko_genes == -1:
-                n_ko_genes = n_vars
+            n_ko_genes = n_vars if self.n_ko_genes == -1 else self.n_ko_genes
             ko_targets += sorted(rng.choice(n_vars, size=min(n_vars, n_ko_genes), replace=False).tolist())
 
 
