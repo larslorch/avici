@@ -14,7 +14,8 @@ from avici.model import BaseModel, InferenceModel
 from avici.utils.load import load_checkpoint
 from avici.utils.figshare import Figshare
 from avici.utils.data_jax import jax_standardize_default_simple, jax_standardize_count_simple
-from avici.definitions import CACHE_SUBDIR, MODEL_LINEAR_FIGSHARE_ID, MODEL_RFF_FIGSHARE_ID, MODEL_GENE_FIGSHARE_ID
+from avici.definitions import CACHE_SUBDIR, MODEL_LINEAR_FIGSHARE_ID, MODEL_RFF_FIGSHARE_ID, MODEL_GENE_FIGSHARE_ID, \
+    CHECKPOINT_KWARGS
 
 
 class ProgressBar:
@@ -169,15 +170,16 @@ class AVICIModel:
 
 def load_pretrained(download=None, force_download=False, checkpoint_dir=None, cache_path="./", expects_counts=None,
                     verbose=True):
-    """
+    f"""
     Loads a pretrained AVICI model
 
     Args:
         download (str, optional): Specifier for existing pretrained model checkpoint to be downloaded (online)
         force_download (bool, optional): Whether to force re-download of model checkpoint specified via `download`
-        checkpoint_dir (str, optional): Path to model checkpoint (offline)
+        checkpoint_dir (str, optional): Path to *folder* containing both the model checkpoint `<name>.pkl` and
+            the model kwargs `{CHECKPOINT_KWARGS}` files (stored locally).
         cache_path (str, optional): Path used as cache directory for storing the
-            downloaded model checkpoints (Default: `avici/tmp`)
+            downloaded model checkpoints (Default: `./cache`)
         expects_counts (bool, optional): Whether model expects count data, for data standardization purposes.
             Required when providing `checkpoint_dir`.
         verbose (bool, optional): Whether to print path information
@@ -230,6 +232,13 @@ def load_pretrained(download=None, force_download=False, checkpoint_dir=None, ca
                                            "`True`/`False` to ensure proper data standardization. Specifying " \
                                            "`False` should be the default and implies the data is z-standardized."
         model_path = Path(checkpoint_dir)
+        assert model_path.exists(), f"The provided checkpoint_dir `{checkpoint_dir}` does not exist. " \
+                                    f"In case you provided a relative path, try the absolute path instead."
+        assert model_path.is_dir(), "The provided checkpoint_dir is not a directory. You should specify the path to " \
+                                    f"a folder that contains the model `.pkl` (and `{CHECKPOINT_KWARGS}`), " \
+                                    "not the path to the `.pkl` alone."
+        assert (model_path.parent / CHECKPOINT_KWARGS).exists(), f"The provided checkpoint_dir `{checkpoint_dir}` " \
+                                    f"does not contain the file `{CHECKPOINT_KWARGS}`, which is required. " \
 
     # select data standardizer
     if expects_counts:
