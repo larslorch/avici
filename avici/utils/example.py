@@ -9,7 +9,7 @@ from avici.utils.data import onp_standardize_data
 
 def simulate_data( d, n, *, n_interv=0, seed=0, domain=None, path=None, module_paths=None):
     """
-    Helper function for simulating data from a pre-specified `domain` or a YAML domain configuration file.
+    Helper function for simulating data from a pre-specified `domain` or a YAML domain configuration file at `path`.
 
     Args:
         d (int): number of variables in the system to be simulated
@@ -17,8 +17,15 @@ def simulate_data( d, n, *, n_interv=0, seed=0, domain=None, path=None, module_p
         n_interv (int): number of interventional data points to be sampled
         seed (int): random seed
         domain (str): specifier of domain to be simulated. Currently implemented options:
-            `linear-gaussian-scm`, `rff-cauchy-scm`, `gene-ecoli` (all `.yaml` files inside `avici.config.examples`).
-            Only one of `domain`
+            `lin-gauss`,
+            `lin-gauss-heterosked`,
+            `lin-laplace-cauchy`,
+            `rff-gauss`,
+            `rff-gauss-heterosked`,
+            `rff-laplace-cauchy`,
+            `gene-ecoli`
+            (all `.yaml` file names inside `avici.config.examples`).
+            Only one of `domain` and `path` must be specified.
         path (str): path to YAML domain configuration, like the examples in `avici.config`
         module_paths (str): path (or list of paths) to additional modules used in the domain configuration file
 

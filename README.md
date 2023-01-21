@@ -36,7 +36,7 @@ from avici import simulate_data
 
 # g: [d, d] causal graph of `d` variables
 # x: [n, d] data matrix containing `n` observations of the `d` variables
-g, x = simulate_data(d=50, n=200, domain="linear-gaussian-scm")
+g, x = simulate_data(d=50, n=200, domain="lin-gauss")
 
 # load pretrained model
 model = avici.load_pretrained(download="linear")
@@ -82,7 +82,18 @@ and accepts the following arguments:
         a decision threshold of 0.5. (Default is `True` as the computational 
         cost is the same.)
 
-
+When sampling synthetic data via `avici.simulate_data`, 
+the following domain specifiers (dataset distributions) 
+are currently provided:
+`lin-gauss`, 
+`lin-gauss-heterosked`,
+`lin-laplace-cauchy`, 
+`rff-gauss`, 
+`rff-gauss-heterosked`, 
+`rff-laplace-cauchy`, 
+`gene-ecoli`, 
+but custom config files can be specified, too. 
+All these domains are defined inside `avici.config.examples`.
 
 ## Quick Start: Custom Data-Generating Processes
 
@@ -103,6 +114,7 @@ In short, the following three components are needed for training a full model:
     This configuration file specifies the full distribution over datasets used for training.
     Several graph models and data-generating mechanisms are available out-of-the-box, so providing
     additional modules via `func.py` is optional.
+    This file can also be used to simulate data in `avici.simulate_data`.
 
 4. `train.py`: **Python training script**
 

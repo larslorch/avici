@@ -4,9 +4,13 @@ data:
     n_observations_int: null
 
     graph:
+      - __class__: ScaleFree
+        edges_per_var: [ 2 ]
+        power: [ 0.5, 1.0, 1.5 ]
+
       - __class__: ScaleFreeTranspose
         edges_per_var: [ 2 ]
-        power: [ 0.5, 1.5 ]
+        power: [ 0.5, 1.0, 1.5 ]
 
       - __class__: WattsStrogatz
         dim: [ 2, 3 ]
@@ -41,11 +45,12 @@ data:
 
         noise:
           - __class__: Cauchy
+          - __class__: Laplace
 
-        noise_scale_heteroscedastic:
-          - rff:
-            length_scale: 10.0
-            output_scale: 2.0
+        noise_scale:
+          - __class__: Uniform
+            low: 0.2
+            high: 2.0
 
         n_interv_vars: -1
         interv_dist:
