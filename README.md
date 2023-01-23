@@ -18,6 +18,7 @@ To install the latest stable release, run:
 pip install avici
 ````
 [![PyPi](https://img.shields.io/pypi/v/avici?logo=PyPI)](https://pypi.org/project/avici/)
+[![HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97-HuggingFace-yellow)](https://huggingface.co/larslorch/avici)
 
 The package allows training new models from scratch on custom data-generating processes 
 and performing predictions with pretrained models from our side.
@@ -39,7 +40,7 @@ from avici import simulate_data
 g, x = simulate_data(d=50, n=200, domain="lin-gauss")
 
 # load pretrained model
-model = avici.load_pretrained(download="linear")
+model = avici.load_pretrained(download="neurips-linear")
 
 # g_prob: [d, d] predicted edge probabilities of the causal graph
 g_prob = model(x=x)
@@ -49,17 +50,16 @@ You can run a working example this snippet directly in the following Google Cola
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/larslorch/avici/blob/master/example-pretrained/example.ipynb)
 
 The above code automatically downloads and initializes 
-a pretrained model checkpoint
-(~60MB) of the requested domain and predicts
-the causal structure of the simulated data.
+a pretrained model checkpoint (~60MB) of the domain 
+and predicts the causal structure underlying the simulated data.
 Based on our paper, we provide the pretrained weights for models trained on
 three data-generating processes, which are specified by the `download` argument:
 
-- `linear`: SCM data with linear causal mechanisms
-- `nonlinear`: SCM data with nonlinear causal mechanisms drawn 
+- `neurips-linear`: SCM data with linear causal mechanisms
+- `neurips-rff`: SCM data with nonlinear causal mechanisms drawn 
 from GPs with squared-exponential kernel
 (defined via random Fourier features)
-- `sergio`: Synthetic scRNA-seq gene expression data using the SERGIO
+- `neurips-grn`: Synthetic scRNA-seq gene expression data using the SERGIO
 [simulator](https://github.com/PayamDiba/SERGIO) by 
 [Dibaeinia and Sinha, (2020)](https://www.cell.com/cell-systems/pdf/S2405-4712(20)30287-8.pdf)
 

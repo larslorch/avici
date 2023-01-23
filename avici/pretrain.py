@@ -12,68 +12,11 @@ import jax.numpy as jnp
 
 from avici.model import BaseModel, InferenceModel
 from avici.utils.load import load_checkpoint
-from avici.utils.figshare import Figshare
 from avici.utils.data_jax import jax_standardize_default_simple, jax_standardize_count_simple
-from avici.definitions import CACHE_SUBDIR, MODEL_LINEAR_FIGSHARE_ID, MODEL_RFF_FIGSHARE_ID, MODEL_GENE_FIGSHARE_ID, \
-    CHECKPOINT_KWARGS
+from avici.definitions import CACHE_SUBDIR, CHECKPOINT_KWARGS, HUGGINGFACE_REPO, \
+    MODEL_NEURIPS_LINEAR, MODEL_NEURIPS_RFF, MODEL_NEURIPS_GRN
 
-
-class ProgressBar:
-    def __init__(self, delay=0.1):
-        self.pbar = None
-        self.delay = delay
-        self.unit = 1024
-
-    def __call__(self, block_num, block_size, total_size):
-        if self.pbar is None:
-            self.pbar = tqdm(total=total_size, unit="B", delay=self.delay, unit_scale=True, unit_divisor=self.unit)
-        self.pbar.update(block_size)
-
-    def close(self):
-        self.pbar.close()
-
-
-def download_from_figshare(*, domain, figshare_id, model_path):
-    # download source from figshare
-    pbar = ProgressBar()
-    try:
-        fs = Figshare(token=None, private=False)
-        print(f"Downloading checkpoint for `{domain}`... ", flush=True)
-        fs.retrieve_files_from_article(figshare_id, directory=model_path, reporthook=pbar)
-        pbar.close()
-    except KeyboardInterrupt:
-        shutil.rmtree(model_path)
-        pbar.close()
-        raise KeyboardInterrupt
-    except Exception as e:
-        shutil.rmtree(model_path)
-        pbar.close()
-        raise e
-
-    # expand zip
-    download_root = model_path / f"figshare_{figshare_id}"
-    download_files = list(download_root.iterdir())
-    assert len(download_files) == 1, \
-        f"Only 1 file should have been downloaded from figshare. Got:\n{download_root}"
-    download_file = download_files[0]
-    assert download_file.suffix == ".zip", f"Downloaded checkpoint should be .zip but got `{download_file.suffix}`"
-
-    expand_to = model_path / "tmp"
-    with zipfile.ZipFile(download_file, "r") as zip_ref:
-        zip_ref.extractall(expand_to)
-
-    # move checkpoint to root of folder and clean up zip and temporary files
-    checkpoint_folders = list(filter(lambda p: p.name != "__MACOSX", expand_to.iterdir()))
-    assert len(checkpoint_folders) == 1, \
-        f"Only 1 folder should be inside the .zip archive. Got:\n{checkpoint_folders}"
-    checkpoint_folder = checkpoint_folders[0]
-
-    for p in checkpoint_folder.iterdir():
-        shutil.move(p, model_path / p.name)
-
-    shutil.rmtree(download_root)
-    shutil.rmtree(expand_to)
-    return
+from huggingface_hub import hf_hub_download
 
 
 class AVICIModel:
@@ -192,14 +135,14 @@ def load_pretrained(download=None, force_download=False, checkpoint_dir=None, ca
 
     # get figshare source link and select standardization function (bind heldout_data as `None`)
     if download is not None:
-        if download == "linear":
-            figshare_id = MODEL_LINEAR_FIGSHARE_ID
+        if download == "neurips-linear":
+            paths = MODEL_NEURIPS_LINEAR
             expects_counts = False
-        elif download == "nonlinear":
-            figshare_id = MODEL_RFF_FIGSHARE_ID
+        elif download == "neurips-rff":
+            paths = MODEL_NEURIPS_RFF
             expects_counts = False
-        elif download == "sergio":
-            figshare_id = MODEL_GENE_FIGSHARE_ID
+        elif download == "neurips-grn":
+            paths = MODEL_NEURIPS_GRN
             expects_counts = True
         else:
             raise ValueError(f"Unknown download specified: `{download}`")
@@ -214,31 +157,37 @@ def load_pretrained(download=None, force_download=False, checkpoint_dir=None, ca
             if verbose:
                 print(f"Using default cache_path: `{cache_path}`")
 
-        model_path = Path(cache_path) / f"checkpoint_{download}"
+        # download from huggingface
+        model_paths = []
+        for path in paths:
+            subfolder, filename = Path(path).parent, Path(path).name
+            file_path = hf_hub_download(
+                repo_id=HUGGINGFACE_REPO,
+                subfolder=subfolder,
+                filename=filename,
+                cache_dir=cache_path,
+                force_download=force_download,
+            )
+            model_paths.append(Path(file_path))
 
-        if not (model_path.exists() and model_path.is_dir() and len(list(model_path.iterdir()))):
-            download_from_figshare(domain=download, figshare_id=figshare_id, model_path=model_path)
-        elif force_download:
-            shutil.rmtree(model_path)
-            if verbose:
-                print(f"Removing previously downloaded checkpoint at: `{model_path}`")
-            download_from_figshare(domain=download, figshare_id=figshare_id, model_path=model_path)
-        else:
-            if verbose:
-                print(f"Using downloaded checkpoint at: `{model_path}`")
+        assert all([p.parent == model_paths[0].parent for p in model_paths]), \
+            f"Folder structure error. All files should be from the same model folder. "
+
+        root_path = model_paths[0].parent
 
     else:
         assert expects_counts is not None, "When loading custom model checkpoint, need to specify `expects_counts` as "\
                                            "`True`/`False` to ensure proper data standardization. Specifying " \
                                            "`False` should be the default and implies the data is z-standardized."
-        model_path = Path(checkpoint_dir)
-        assert model_path.exists(), f"The provided checkpoint_dir `{checkpoint_dir}` does not exist. " \
+        root_path = Path(checkpoint_dir)
+        assert root_path.exists(), f"The provided checkpoint_dir `{checkpoint_dir}` does not exist. " \
                                     f"In case you provided a relative path, try the absolute path instead."
-        assert model_path.is_dir(), "The provided checkpoint_dir is not a directory. You should specify the path to " \
+        assert root_path.is_dir(), "The provided checkpoint_dir is not a directory. You should specify the path to " \
                                     f"a folder that contains the model `.pkl` (and `{CHECKPOINT_KWARGS}`), " \
                                     "not the path to the `.pkl` alone."
-        assert (model_path.parent / CHECKPOINT_KWARGS).exists(), f"The provided checkpoint_dir `{checkpoint_dir}` " \
-                                    f"does not contain the file `{CHECKPOINT_KWARGS}`, which is required. " \
+        assert (root_path.parent / CHECKPOINT_KWARGS).exists(), f"The provided checkpoint_dir `{checkpoint_dir}` " \
+                                    f"does not contain the file `{CHECKPOINT_KWARGS}`, which is required. "
+        print(f"Loading local checkpoint from `{root_path}`")
 
     # select data standardizer
     if expects_counts:
@@ -247,7 +196,7 @@ def load_pretrained(download=None, force_download=False, checkpoint_dir=None, ca
         standardizer = jax_standardize_default_simple
 
     # load checkpoint
-    state, loaded_config = load_checkpoint(model_path)
+    state, loaded_config = load_checkpoint(root_path)
     inference_model_kwargs = loaded_config["inference_model_kwargs"]
     try:
         neural_net_kwargs = loaded_config["neural_net_kwargs"]["model_kwargs"] # legacy compatibility

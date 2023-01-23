@@ -24,8 +24,17 @@ CHECKPOINT_KWARGS = "kwargs.json"
 YAML_CLASS = "__class__"
 YAML_MODULES = "additional_modules"
 
-# model figshare ids
-MODEL_LINEAR_FIGSHARE_ID = 21341034
-MODEL_RFF_FIGSHARE_ID = 21341043
-MODEL_GENE_FIGSHARE_ID = 21341049
-MODEL_RFF_ABLATIONS_FIGSHARE_ID = 21341316
+# huggingface
+HUGGINGFACE_REPO = "larslorch/avici"
+MODEL_NEURIPS_LINEAR = [
+    "neurips-linear/kwargs.json",
+    "neurips-linear/checkpoint_0300000.pkl",
+]
+MODEL_NEURIPS_RFF = [
+    "neurips-rff/kwargs.json",
+    "neurips-rff/checkpoint_0300000.pkl",
+]
+MODEL_NEURIPS_GRN = [
+    "neurips-rff/kwargs.json",
+    "neurips-rff/checkpoint_0300000.pkl",
+]

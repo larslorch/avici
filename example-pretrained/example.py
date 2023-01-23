@@ -7,10 +7,10 @@ if __name__ == "__main__":
     # g: [d, d] causal graph of `d` variables
     # x: [n, d] data matrix containing `n` observations of the `d` variables
     # interv: [n, d] binary matrix indicating which nodes were intervened upon
-    g, x, interv = simulate_data(d=20, n=50, n_interv=10, domain="linear-gaussian-scm")
+    g, x, interv = simulate_data(d=20, n=50, n_interv=10, domain="lin-gauss")
 
     # load pretrained model
-    model = avici.load_pretrained(download="linear")
+    model = avici.load_pretrained(download="neurips-linear")
 
     # g: [d, d] predicted edge probabilities of the causal graph
     g_prob = model(x=x, interv=interv)
