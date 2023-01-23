@@ -74,8 +74,10 @@ def sample_recursive_scm(*,
     simulate_interv_data = n_observations_int > 0
     if simulate_interv_data:
         assert n_interv_vars != 0, f"Need n_interv_vars != 0 to sample interventional data"
-        if n_interv_vars == -1:
+        if n_interv_vars == -1 or n_interv_vars == 1.0:
             n_interv_vars = n_vars
+        elif not n_interv_vars.is_integer():
+            n_interv_vars = math.ceil(n_interv_vars * n_vars)
         interv_targets += sorted(rng.choice(n_vars, size=min(n_vars, n_interv_vars), replace=False).tolist())
 
     assert (n_interv_vars == -1) or (0 <= n_interv_vars <= n_vars),\

@@ -1,0 +1,208 @@
+---
+train_n_vars: [2, 5, 10, 20, 30, 40, 60, 80, 100]
+test_n_vars: [20, 70, 200]
+test_n_datasets: 25
+data:
+  - n_observations_obs: 600
+    n_observations_int: 200
+
+    graph:
+      - __class__: ErdosRenyi
+        edges_per_var: [ 1.0, 2.0, 3.0 ]
+
+      - __class__: ScaleFree
+        edges_per_var: [ 1, 2, 3 ]
+        power: [ 0.7, 1.0, 1.2, 1.5 ]
+
+      - __class__: ScaleFreeTranspose
+        edges_per_var: [ 1, 2, 3 ]
+        power: [ 0.7, 1.0, 1.2, 1.5 ]
+
+      - __class__: WattsStrogatz
+        dim: [ 2, 3 ]
+        nei: [ 1, 2 ]
+        p: [ 0.2, 0.4 ]
+
+      - __class__: SBM
+        edges_per_var: [ 1, 2, 3 ]
+        n_blocks: [ 2, 5, 10 ]
+        damp: [ 0.1 ]
+
+      - __class__: GRG
+        radius: [ 0.08, 0.1, 0.15 ]
+
+    mechanism:
+
+      # linear additive SCM
+      - __class__: LinearAdditive
+
+        param:
+          - __class__: SignedUniform
+            low: 0.25
+            high: 2.0
+          - __class__: SignedUniform
+            low: 2.0
+            high: 4.0
+          - __class__: SignedUniform
+            low: 0.25
+            high: 4.0
+
+        bias:
+          - __class__: Uniform
+            low: -3.0
+            high: 3.0
+
+        noise:
+          - __class__: Gaussian
+          - __class__: Gaussian
+          - __class__: Gaussian
+          - __class__: Laplace
+          - __class__: Laplace
+          - __class__: Cauchy
+
+        noise_scale:
+          - __class__: Uniform
+            low: 0.2
+            high: 2.0
+
+        n_interv_vars: [ 0.5, 1.0 ]
+        interv_dist:
+          - __class__: SignedUniform
+            low:  1.0
+            high: 5.0
+
+      # linear additive SCM - heteroskedastic
+      - __class__: LinearAdditive
+
+        param:
+          - __class__: SignedUniform
+            low: 0.25
+            high: 2.0
+          - __class__: SignedUniform
+            low: 2.0
+            high: 4.0
+          - __class__: SignedUniform
+            low: 0.25
+            high: 4.0
+
+        bias:
+          - __class__: Uniform
+            low: -3.0
+            high: 3.0
+
+        noise:
+          - __class__: Gaussian
+          - __class__: Gaussian
+          - __class__: Gaussian
+          - __class__: Laplace
+          - __class__: Laplace
+          - __class__: Cauchy
+
+        noise_scale_heteroscedastic:
+          - rff:
+            length_scale: 10.0
+            output_scale: 2.0
+
+        n_interv_vars: [ 0.5, 1.0 ]
+        interv_dist:
+          - __class__: SignedUniform
+            low:  1.0
+            high: 5.0
+
+      # nonlinear additive SCM (GP/RFF)
+      - __class__: RFFAdditive
+
+        length_scale:
+          - __class__: Uniform
+            low: 5.0
+            high: 8.0
+          - __class__: Uniform
+            low: 8.0
+            high: 12.0
+          - __class__: Uniform
+            low: 5.0
+            high: 12.0
+
+        output_scale:
+          - __class__: Uniform
+            low: 8.0
+            high: 15.0
+          - __class__: Uniform
+            low: 15.0
+            high: 22.0
+          - __class__: Uniform
+            low: 8.0
+            high: 22.0
+
+        bias:
+          - __class__: Uniform
+            low: -3.0
+            high: 3.0
+
+        noise:
+          - __class__: Gaussian
+          - __class__: Gaussian
+          - __class__: Gaussian
+          - __class__: Laplace
+          - __class__: Laplace
+          - __class__: Cauchy
+
+        noise_scale_heteroscedastic:
+          - rff:
+            length_scale: 10.0
+            output_scale: 2.0
+
+        n_interv_vars: [ 0.5, 1.0 ]
+        interv_dist:
+          - __class__: SignedUniform
+            low:  1.0
+            high: 5.0
+
+      # nonlinear additive SCM (GP/RFF)  - heteroskedastic
+      - __class__: RFFAdditive
+
+        length_scale:
+          - __class__: Uniform
+            low: 5.0
+            high: 8.0
+          - __class__: Uniform
+            low: 8.0
+            high: 12.0
+          - __class__: Uniform
+            low: 5.0
+            high: 12.0
+
+        output_scale:
+          - __class__: Uniform
+            low: 8.0
+            high: 15.0
+          - __class__: Uniform
+            low: 15.0
+            high: 22.0
+          - __class__: Uniform
+            low: 8.0
+            high: 22.0
+
+        bias:
+          - __class__: Uniform
+            low: -3.0
+            high: 3.0
+
+        noise:
+          - __class__: Gaussian
+          - __class__: Gaussian
+          - __class__: Gaussian
+          - __class__: Laplace
+          - __class__: Laplace
+          - __class__: Cauchy
+
+        noise_scale_heteroscedastic:
+          - rff:
+            length_scale: 10.0
+            output_scale: 2.0
+
+        n_interv_vars: [ 0.5, 1.0 ]
+        interv_dist:
+          - __class__: SignedUniform
+            low:  1.0
+            high: 5.0

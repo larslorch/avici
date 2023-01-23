@@ -35,6 +35,10 @@ MODEL_NEURIPS_RFF = [
     "neurips-rff/checkpoint_0300000.pkl",
 ]
 MODEL_NEURIPS_GRN = [
-    "neurips-rff/kwargs.json",
-    "neurips-rff/checkpoint_0300000.pkl",
+    "neurips-grn/kwargs.json",
+    "neurips-grn/checkpoint_0300000.pkl",
+]
+MODEL_NEURIPS_SCM_V0 = [
+    "scm-v0/kwargs.json",
+    "scm-v0/checkpoint_0300000.pkl",
 ]

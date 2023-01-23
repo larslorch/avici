@@ -70,4 +70,4 @@ def simulate_data( d, n, *, n_interv=0, seed=0, domain=None, path=None, module_p
     if n_interv:
         return data["g"].astype(int), x[..., 0], x[..., 1]
     else:
-        return data["g"].astype(int), x[..., 0]
+        return data["g"].astype(int), x[..., 0], None

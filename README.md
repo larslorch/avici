@@ -37,10 +37,10 @@ from avici import simulate_data
 
 # g: [d, d] causal graph of `d` variables
 # x: [n, d] data matrix containing `n` observations of the `d` variables
-g, x = simulate_data(d=50, n=200, domain="lin-gauss")
+g, x, _ = simulate_data(d=50, n=200, domain="lin-gauss")
 
 # load pretrained model
-model = avici.load_pretrained(download="neurips-linear")
+model = avici.load_pretrained(download="scm-v0")
 
 # g_prob: [d, d] predicted edge probabilities of the causal graph
 g_prob = model(x=x)
@@ -52,9 +52,12 @@ You can run a working example this snippet directly in the following Google Cola
 The above code automatically downloads and initializes 
 a pretrained model checkpoint (~60MB) of the domain 
 and predicts the causal structure underlying the simulated data.
-Based on our paper, we provide the pretrained weights for models trained on
-three data-generating processes, which are specified by the `download` argument:
 
+
+We currently provide the following models checkpoints,
+which can be specified by the `download` argument:
+
+- `scm-v0` (**default**): linear and nonlinear SCM data, broad graph and noise distributions
 - `neurips-linear`: SCM data with linear causal mechanisms
 - `neurips-rff`: SCM data with nonlinear causal mechanisms drawn 
 from GPs with squared-exponential kernel
@@ -63,11 +66,29 @@ from GPs with squared-exponential kernel
 [simulator](https://github.com/PayamDiba/SERGIO) by 
 [Dibaeinia and Sinha, (2020)](https://www.cell.com/cell-systems/pdf/S2405-4712(20)30287-8.pdf)
 
-For details on the exact training distributions of these models,
-please refer to Appendix A of 
-[Lorch et al., (2022)](https://arxiv.org/abs/2205.12934). 
-The corresponding YAML domain configuration files are available [here](avici/config/train/).
+We recommend using the latest `scm-v0` for working with arbitrary real-valued data. 
+This model was trained on SCM data simulated from a large variety of graph models with up to 100 nodes, 
+both linear and nonlinear causal mechanisms, and homogeneous and heterogeneous additive noise from
+Gaussian, Laplace, and Cauchy distributions.
 
+The models `neurips-linear`, `neurips-rff`, `neurips-grn` studied in our original 
+paper were purposely trained on narrower training distributions to assess the out-of-distribution 
+capability of AVICI. Unless your prior domain knowledge is strong,
+this may make the `neurips-*` models less suitable for benchmarking
+or as general purpose/out-of-the-box tools in your application.
+The training distribution of `scm-v0` essentially combines that of
+`neurips-linear` and  `neurips-rff` as well as its out-of-distribution
+settings in [Lorch et al., (2022)](https://arxiv.org/abs/2205.12934).
+
+
+For details on the exact training distributions of these models,
+please refer to the [model cards](https://huggingface.co/larslorch/avici) 
+on HuggingFace. Appendix A of 
+[Lorch et al., (2022)](https://arxiv.org/abs/2205.12934) also defines the training distributions
+of the `neurips-*` models.
+The YAML domain config file for each model is available in [`avici/config/train/`](avici/config/train/).
+
+---
 
 Calling `model` as obtained from `avici.load_pretrained`
 predicts the `[d, d]` matrix of probabilities for each possible edge in the causal graph

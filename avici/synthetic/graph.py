@@ -321,9 +321,6 @@ class SBM(GraphModel):
         self.damp = damp
 
     def __call__(self, rng, n_vars):
-        assert n_vars >= self.n_blocks >= 1, \
-            f"Invalid `n_blocks` ({self.n_blocks}) given `n_vars` ({n_vars})"
-
         # sample blocks
         splits = onp.sort(rng.choice(n_vars, size=self.n_blocks - 1, replace=False))
         blocks = onp.split(rng.permutation(n_vars), splits)

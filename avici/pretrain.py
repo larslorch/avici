@@ -14,7 +14,7 @@ from avici.model import BaseModel, InferenceModel
 from avici.utils.load import load_checkpoint
 from avici.utils.data_jax import jax_standardize_default_simple, jax_standardize_count_simple
 from avici.definitions import CACHE_SUBDIR, CHECKPOINT_KWARGS, HUGGINGFACE_REPO, \
-    MODEL_NEURIPS_LINEAR, MODEL_NEURIPS_RFF, MODEL_NEURIPS_GRN
+    MODEL_NEURIPS_LINEAR, MODEL_NEURIPS_RFF, MODEL_NEURIPS_GRN, MODEL_NEURIPS_SCM_V0
 
 from huggingface_hub import hf_hub_download
 
@@ -144,6 +144,9 @@ def load_pretrained(download=None, force_download=False, checkpoint_dir=None, ca
         elif download == "neurips-grn":
             paths = MODEL_NEURIPS_GRN
             expects_counts = True
+        elif download == "scm-v0":
+            paths = MODEL_NEURIPS_SCM_V0
+            expects_counts = False
         else:
             raise ValueError(f"Unknown download specified: `{download}`")
 

@@ -10,7 +10,7 @@ if __name__ == "__main__":
     g, x, interv = simulate_data(d=20, n=50, n_interv=10, domain="lin-gauss")
 
     # load pretrained model
-    model = avici.load_pretrained(download="neurips-linear")
+    model = avici.load_pretrained(download="scm-v0")
 
     # g: [d, d] predicted edge probabilities of the causal graph
     g_prob = model(x=x, interv=interv)
