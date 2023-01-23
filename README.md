@@ -57,7 +57,7 @@ and predicts the causal structure underlying the simulated data.
 We currently provide the following models checkpoints,
 which can be specified by the `download` argument:
 
-- `scm-v0` (**default**): linear and nonlinear SCM data, broad graph and noise distributions
+- `scm-v0`: linear and nonlinear SCM data, broad graph and noise distributions
 - `neurips-linear`: SCM data with linear causal mechanisms
 - `neurips-rff`: SCM data with nonlinear causal mechanisms drawn 
 from GPs with squared-exponential kernel
@@ -66,7 +66,7 @@ from GPs with squared-exponential kernel
 [simulator](https://github.com/PayamDiba/SERGIO) by 
 [Dibaeinia and Sinha, (2020)](https://www.cell.com/cell-systems/pdf/S2405-4712(20)30287-8.pdf)
 
-We recommend using the latest `scm-v0` for working with arbitrary real-valued data. 
+We recommend  the latest `scm-v0` for working with arbitrary real-valued data. 
 This model was trained on SCM data simulated from a large variety of graph models with up to 100 nodes, 
 both linear and nonlinear causal mechanisms, and homogeneous and heterogeneous additive noise from
 Gaussian, Laplace, and Cauchy distributions.
@@ -76,8 +76,8 @@ paper were purposely trained on narrower training distributions to assess the ou
 capability of AVICI. Unless your prior domain knowledge is strong,
 this may make the `neurips-*` models less suitable for benchmarking
 or as general purpose/out-of-the-box tools in your application.
-The training distribution of `scm-v0` essentially combines that of
-`neurips-linear` and  `neurips-rff` as well as its out-of-distribution
+The training distribution of `scm-v0` essentially combines those of
+`neurips-linear` and  `neurips-rff` as well as their out-of-distribution
 settings in [Lorch et al., (2022)](https://arxiv.org/abs/2205.12934).
 
 
