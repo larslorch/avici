@@ -88,7 +88,6 @@ on HuggingFace. Appendix A of
 of the `neurips-*` models.
 The YAML domain config file for each model is available in [`avici/config/train/`](avici/config/train/).
 
----
 
 Calling `model` as obtained from `avici.load_pretrained`
 predicts the `[d, d]` matrix of probabilities for each possible edge in the causal graph
