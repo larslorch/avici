@@ -30,7 +30,6 @@ setup(
         'scipy',
         'pandas',
         'igraph',
-        'python-igraph',
         'scikit-learn',
         'sklearn',
         'tqdm>=4.64.1',
