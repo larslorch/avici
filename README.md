@@ -1,5 +1,9 @@
 # Amortized Inference for Causal Structure Learning
 
+[![Downloads](https://static.pepy.tech/badge/avici)](https://pypi.org/project/avici/)
+[![PyPi](https://img.shields.io/pypi/v/avici?logo=PyPI)](https://pypi.org/project/avici/)
+[![HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97-HuggingFace-yellow)](https://huggingface.co/larslorch/avici)
+
 This is the code repository for the paper 
 _Amortized Inference for Causal Structure Learning_
 ([Lorch et al., 2022](https://arxiv.org/abs/2205.12934), NeurIPS 2022).
@@ -17,9 +21,6 @@ To install the latest stable release, run:
 ```bash
 pip install avici
 ````
-[![Downloads](https://static.pepy.tech/badge/avici)](https://pypi.org/project/avici/)
-[![PyPi](https://img.shields.io/pypi/v/avici?logo=PyPI)](https://pypi.org/project/avici/)
-[![HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97-HuggingFace-yellow)](https://huggingface.co/larslorch/avici)
 
 The package allows training new models from scratch on custom data-generating processes 
 and performing predictions with pretrained models from our side.
