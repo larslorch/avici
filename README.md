@@ -17,6 +17,7 @@ To install the latest stable release, run:
 ```bash
 pip install avici
 ````
+[![Downloads](https://static.pepy.tech/badge/avici)](https://pypi.org/project/avici/)
 [![PyPi](https://img.shields.io/pypi/v/avici?logo=PyPI)](https://pypi.org/project/avici/)
 [![HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97-HuggingFace-yellow)](https://huggingface.co/larslorch/avici)
 
