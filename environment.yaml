@@ -5,7 +5,6 @@ channels:
 dependencies:
 - conda
 - python=3.10.6
-- jaxlib=0.3.14 # jax installed via pip (Apple silicon compatibility)
 - tensorflow=2.9.1
 - pip
 - pip:
