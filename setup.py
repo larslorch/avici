@@ -24,7 +24,7 @@ setup(
     install_requires=[
         'jax>=0.3.17',
         'jaxlib>=0.3.14',
-        'tensorflow=2.9.1',
+        'tensorflow==2.9.1',
         'imageio',
         'jupyter',
         'matplotlib',
