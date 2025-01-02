@@ -1,14 +1,15 @@
-import zipfile
 import functools
 import inspect
-import shutil
 import warnings
-from tqdm.auto import tqdm
 from pathlib import Path
 
-import jax
 import numpy as onp
+
+import jax
 import jax.numpy as jnp
+from jax.sharding import PositionalSharding
+from jax.experimental import mesh_utils
+
 
 from avici.model import BaseModel, InferenceModel
 from avici.utils.load import load_checkpoint
@@ -66,7 +67,13 @@ class AVICIModel:
         return g_edges_prob
 
 
-    def __call__(self, x, interv=None, return_probs=True):
+    def __call__(self,
+                 x,
+                 interv=None,
+                 return_probs=True,
+                 devices=None,
+                 shard_if_possible=True,
+                 ):
         """
         Wraps __call_main__ to do some tests and warnings before jax.jit
 
@@ -78,15 +85,24 @@ class AVICIModel:
                 the computational cost is the same. `False` simply clips the predictions to 0 and 1 using a decision
                 threshold of 0.5. Other thresholds achieve a different true positive vs
                 false positive trade-off and can be computed using the probabilities returned with `True`.
-
+            devices: String definining the backend to use for computation (e.g., "cpu", "gpu", "tpu") with all available
+                devices, or list of explicit JAX devices to use for computation. If `None`, uses all available devices
+                of the default JAX backend.
+            shard_if_possible: Whether to shard the computation across the observations axis (`n`) of the input when
+                multiple devices are available. This may improve the memory footprint on device. Discards the last
+                 `n mod len(devices)` observations to allow sharding observations equally across devices.
+                If `False`, does not shard the data and places input and computation on the first device in `devices`.
+                Defaults to `True`.
         Returns:
             `[d, d]` adjacency matrix of predicted edge probabilities
         """
         x_type = type(x)
+        assert x.ndim == 2, "`x` must be a 2D array of shape [n, d]."
 
         # check that interv mask is binary
         if interv is not None:
             assert x.shape == interv.shape, "`x` and `interv` must have the same shape when provided."
+            assert interv.ndim == 2, "`interv` must be a 2D array of shape [n, d] when provided."
             interv_is_binary = onp.all(onp.isclose(interv, 0) | onp.isclose(interv, 1))
             assert interv_is_binary, "Intervention mask `interv` has to be binary."
             interv = onp.around(interv, 0, out=interv)
@@ -97,7 +113,35 @@ class AVICIModel:
             if not x_is_int:
                 warnings.warn(f"Model expects count data but `x` contains non-integer values. ")
 
-        # main call
+        # convert input to JAX and commit to device
+        if type(devices) == str:
+            devices = jax.local_devices(backend=devices)
+        elif devices is None:
+            devices = jax.local_devices()
+
+        if shard_if_possible:
+            device_count = len(devices)
+            mesh = mesh_utils.create_device_mesh((device_count,), devices)
+            sharding = PositionalSharding(mesh)
+            sh = sharding.reshape((device_count, 1))
+
+            # if observations cannot be sharded equally, discard the last `n mod len(devices)` observations
+            rem = x.shape[0] % device_count
+            if rem:
+                x = x[:-rem]
+                if interv is not None:
+                    interv = interv[:-rem]
+
+            x = jax.device_put(x, sh)
+            if interv is not None:
+                interv = jax.device_put(interv, sh)
+
+        else:
+            x = jax.device_put(x, devices[0])
+            if interv is not None:
+                interv = jax.device_put(interv, devices[0])
+
+        # main inference call
         out = self.__call_main__(x=x, interv=interv)
 
         # if desired, threshold output
