@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name='avici',
-    version='1.0.6',
+    version='1.0.7',
     description='Amortized Inference for Causal Structure Learning',
     author='Lars Lorch',
     author_email='lars.lorch@inf.ethz.ch',
@@ -36,7 +36,7 @@ setup(
         'dm-haiku>=0.0.8',
         'psutil',
         'optax',
-        'pyarrow==7.0.0',
+        'pyarrow',
         'tensorflow-datasets~=4.3.0',
         'deepdiff',
         'huggingface-hub',
