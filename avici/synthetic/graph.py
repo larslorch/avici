@@ -322,13 +322,14 @@ class SBM(GraphModel):
 
     def __call__(self, rng, n_vars):
         # sample blocks
-        splits = onp.sort(rng.choice(n_vars, size=self.n_blocks - 1, replace=False))
+        n_blocks = min(n_vars, self.n_blocks)
+        splits = onp.sort(rng.choice(n_vars, size=n_blocks - 1, replace=False))
         blocks = onp.split(rng.permutation(n_vars), splits)
         block_sizes = onp.array([b.shape[0] for b in blocks])
 
         # select p s.t. we get requested edges_per_var in expectation
         block_edges_sampled = (onp.outer(block_sizes, block_sizes) - onp.diag(block_sizes)) / 2
-        relative_block_probs = onp.eye(self.n_blocks) + self.damp * (1 - onp.eye(self.n_blocks))
+        relative_block_probs = onp.eye(n_blocks) + self.damp * (1 - onp.eye(n_blocks))
         n_edges = self.edges_per_var * n_vars
         p = min(0.99, n_edges / onp.sum(block_edges_sampled * relative_block_probs))
 
