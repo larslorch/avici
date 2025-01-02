@@ -28,7 +28,7 @@ setup(
         'imageio',
         'jupyter',
         'matplotlib',
-        'numpy',
+        'numpy<2',
         'pandas',
         'igraph',
         'scikit-learn',
