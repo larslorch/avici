@@ -63,6 +63,7 @@ def simulate_data( d, n, *, n_interv=0, seed=0, domain=None, path=None, module_p
         spec_list=spec,
     )
     x = onp.concatenate([data["x_obs"], data["x_int"]], axis=-3)
+    x = rng.permutation(x)
 
     # standardize only if not real-valued data
     data = onp_standardize_data(data) if not data["is_count_data"] else data
