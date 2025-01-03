@@ -152,7 +152,7 @@ model = avici.load_pretrained(checkpoint_dir="path/to/checkpoint", expects_count
 
 ## Change Log
 
-- **avici 1.1.0:** 
+- **avici 1.0.7:** 
 `experimental_chunk_size` flags in the forward pass for more memory efficiency, which applies transformer blocks 
 in chunks along the observations axis until the final max-pooling operation. This changes the output,
 since attention is no longer applied jointly over all observation and is an experimental feature that 
@@ -161,12 +161,10 @@ However, it can be useful for large datasets and performed better than staying a
 in preliminary tests. `experimental_chunk_size` should probably be set as high as possible given the
 available memory. 
 
-- **avici 1.0.7:** `devices` and `sharding_if_possible` flags in the forward pass of
+- **avici 1.0.6:** `devices` and `sharding_if_possible` flags in the forward pass of
 [`AVICIModel`](avici/pretrain.py) 
 for running the inference forward pass on a specific backend (e.g. CPU)
 and automatically sharding computation on multiple devices.
-
-- **avici 1.0.6:** Requirements and README updates. 
 
 - **avici 1.0.3:** Published `scm-v0` model parameters.
 
