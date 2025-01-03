@@ -36,7 +36,7 @@ setup(
         'dm-haiku>=0.0.8',
         'psutil',
         'optax',
-        'pyarrow',
+        'pyarrow==10.0.1',
         'tensorflow-datasets~=4.3.0',
         'deepdiff',
         'huggingface-hub',
