@@ -1,4 +1,6 @@
 import inspect
+import functools
+
 import jax
 import jax.numpy as jnp
 import jax.random as random
@@ -48,40 +50,73 @@ class BaseModel(hk.Module):
         self.w_init = hk.initializers.VarianceScaling(2.0, "fan_in", "uniform")  # kaiming uniform
 
 
-    def __call__(self, x, is_training: bool):
-        dropout_rate = self.dropout if is_training else 0.0
-        z = hk.Linear(self.dim)(x)
+    @hk.transparent
+    def _block(self, z, dropout_rate):
+        # multi-head attention
+        q_in = layer_norm(axis=self.ln_axis)(z)
+        k_in = layer_norm(axis=self.ln_axis)(z)
+        v_in = layer_norm(axis=self.ln_axis)(z)
+        z_attn = hk.MultiHeadAttention(
+            num_heads=self.num_heads,
+            key_size=self.key_size,
+            w_init_scale=2.0,
+            model_size=self.dim,
+        )(q_in, k_in, v_in)
+        z = z + hk.dropout(hk.next_rng_key(), dropout_rate, z_attn)
+
+        # feed-forward network
+        z_in = layer_norm(axis=self.ln_axis)(z)
+        z_ffn = hk.Sequential([
+            hk.Linear(self.widening_factor * self.dim, w_init=self.w_init),
+            jax.nn.relu,
+            hk.Linear(self.dim, w_init=self.w_init),
+        ])(z_in)
+        z = z + hk.dropout(hk.next_rng_key(), dropout_rate, z_ffn)
+        return z
+
+
+    @hk.transparent
+    def _all_blocks_and_max(self, z, *, dropout_rate):
+        assert not self.layers % 2, "Number of layers must be even"
 
         for _ in range(self.layers):
-            # mha
-            q_in = layer_norm(axis=self.ln_axis)(z)
-            k_in = layer_norm(axis=self.ln_axis)(z)
-            v_in = layer_norm(axis=self.ln_axis)(z)
-            z_attn = hk.MultiHeadAttention(
-                num_heads=self.num_heads,
-                key_size=self.key_size,
-                w_init_scale=2.0,
-                model_size=self.dim,
-            )(q_in, k_in, v_in)
-            z = z + hk.dropout(hk.next_rng_key(), dropout_rate, z_attn)
-
-            # ffn
-            z_in = layer_norm(axis=self.ln_axis)(z)
-            z_ffn = hk.Sequential([
-                hk.Linear(self.widening_factor * self.dim, w_init=self.w_init),
-                jax.nn.relu,
-                hk.Linear(self.dim, w_init=self.w_init),
-            ])(z_in)
-            z = z + hk.dropout(hk.next_rng_key(), dropout_rate, z_ffn)
-
-            # flip N and d axes
+            z = self._block(z, dropout_rate)
             z = jnp.swapaxes(z, -3, -2)
 
         z = layer_norm(axis=self.ln_axis)(z)
-        assert z.shape[-2] == x.shape[-2] and z.shape[-3] == x.shape[-3], "Do we have an odd number of layers?"
 
         # [..., n_vars, dim]
         z = jnp.max(z, axis=-3)
+        return z
+
+
+    def __call__(self, x, is_training, experimental_chunk_size=None):
+        dropout_rate = self.dropout if is_training else 0.0
+        z = hk.Linear(self.dim)(x)
+
+        block = functools.partial(self._all_blocks_and_max, dropout_rate=dropout_rate)
+
+        n = z.shape[-3]
+        if experimental_chunk_size is not None and 0 < experimental_chunk_size < n:
+            # chunk tensor along the observations axis into chunks of size `experimental_chunk_size`
+            # could be done prior to loading data to memory to reduce memory further
+            assert not n % experimental_chunk_size, "observations `n` must be divisible by `experimental_chunk_size` "
+            chunks = n // experimental_chunk_size
+            z = z.reshape(*z.shape[:-3], experimental_chunk_size, chunks, *z.shape[-2:])
+            z = jnp.swapaxes(z, -3, 0)
+
+            # apply block to each chunk with scan to reduce memory
+            @functools.partial(hk.remat, prevent_cse=False)
+            def block_scanner(_, _z):
+                return _, block(_z)
+
+            z = jax.lax.scan(block_scanner, init=None, xs=z)[1] # do not use hk.scan here to avoid reinitializing modules
+
+            # apply max-pool reduction again to discard the chunk dimension
+            z = jnp.max(z, axis=0)
+
+        else:
+            z = block(z)
 
         # u, v dibs embeddings for edge probabilities
         u = hk.Sequential([
@@ -134,25 +169,25 @@ class InferenceModel:
             # print(f"Ignoring deprecated kwarg `{k}` loaded from `model_kwargs` in checkpoint")
 
         # init forward pass transform
-        self.net = hk.transform(lambda *args: model_class(**model_kwargs)(*args))
+        self.net = hk.transform(lambda *args, **kwargs: model_class(**model_kwargs)(*args, **kwargs))
 
 
-    @functools.partial(jax.jit, static_argnums=(0, 1))
-    def sample_graphs(self, n_samples, params, rng, x):
+    @functools.partial(jax.jit, static_argnums=(0, 1, 5))
+    def sample_graphs(self, n_samples, params, rng, x, experimental_chunk_size=None):
         """
         Args:
             n_samples: number of samples
             params: hk.Params
             rng
             x: [..., N, d, 2]
-            is_count_data [...] bool
+            experimental_chunk_size (int, optional)
 
         Returns:
             graph samples of shape [..., n_samples, d, d]
         """
         # [..., d, d]
         is_training = False
-        logits = self.net.apply(params, rng, x, is_training)
+        logits = self.net.apply(params, rng, x, is_training, experimental_chunk_size=experimental_chunk_size)
         prob1 = jax.nn.sigmoid(logits)
 
         # sample graphs
@@ -165,21 +200,21 @@ class InferenceModel:
         return samples
 
 
-    @functools.partial(jax.jit, static_argnums=(0, 4))
-    def infer_edge_logprobs(self, params, rng, x, is_training: bool):
+    @functools.partial(jax.jit, static_argnums=(0, 4, 5))
+    def infer_edge_logprobs(self, params, rng, x, is_training, experimental_chunk_size=None):
         """
         Args:
             params: hk.Params
             rng
             x: [..., N, d, 2]
             is_training
-            is_count_data [...] bool
+            experimental_chunk_size (int, optional)
 
         Returns:
             logprobs of graph adjacency matrix prediction of shape [..., d, d]
         """
         # [..., d, d]
-        logits = self.net.apply(params, rng, x, is_training)
+        logits = self.net.apply(params, rng, x, is_training, experimental_chunk_size=experimental_chunk_size)
         logp_edges = jax.nn.log_sigmoid(logits)
         if self.mask_diag:
             logp_edges = set_diagonal(logp_edges, -jnp.inf)
@@ -187,20 +222,20 @@ class InferenceModel:
         return logp_edges
 
 
-    def infer_edge_probs(self, params, x):
+    def infer_edge_probs(self, params, x, experimental_chunk_size=None):
         """
         For test time inference
 
         Args:
             params: hk.Params
             x: [..., N, d, 1]
-            is_count_data [...] bool
+            experimental_chunk_size (int, optional)
 
         Returns:
             probabilities of graph adjacency matrix prediction of shape [..., d, d]
         """
-        is_training_, dummy_rng_ = False, random.PRNGKey(0) # assume test time
-        logp_edges = self.infer_edge_logprobs(params, dummy_rng_, x, is_training_)
+        is_training, dummy_rng = False, random.PRNGKey(0) # assume test time
+        logp_edges = self.infer_edge_logprobs(params, dummy_rng, x, is_training, experimental_chunk_size=experimental_chunk_size)
         p_edges = jnp.exp(logp_edges)
         return p_edges
 
@@ -258,7 +293,7 @@ class InferenceModel:
 
 
     """Training"""
-    def loss(self, params, dual, key, data, t, is_training: bool):
+    def loss(self, params, dual, key, data, t, is_training, experimental_chunk_size=None):
         # `data` leaves have leading dimension [1, batch_size_device, ...]
 
         key, subk = random.split(key)
@@ -272,7 +307,7 @@ class InferenceModel:
         ### inference model q(G | D)
         # [..., n_observations, d, 2] --> [..., d, d]
         key, subk = random.split(key)
-        logits = self.net.apply(params, subk, x, is_training)
+        logits = self.net.apply(params, subk, x, is_training, experimental_chunk_size=experimental_chunk_size)
 
         # get logits [..., d, d]
         logp1 = jax.nn.log_sigmoid(  logits)

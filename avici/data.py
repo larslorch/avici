@@ -329,7 +329,7 @@ class AsyncBufferDataset:
 
     """Dataset"""
 
-    def _make_dataset(self, buffer, is_train: bool, batch_dims=None):
+    def _make_dataset(self, buffer, is_train, batch_dims=None):
         """
         Launch consumer (buffer consumer) tf.data.Dataset iterator to support batching, prefetching, etc.
         for buffers `descr`

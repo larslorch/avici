@@ -150,7 +150,29 @@ model = avici.load_pretrained(checkpoint_dir="path/to/checkpoint", expects_count
 ```
 
 
-## Custom Installation and Branches (Apple Silicon)
+## Change Log
+
+- **avici 1.1.0:** 
+`experimental_chunk_size` flags in the forward pass for more memory efficiency, which applies transformer blocks 
+in chunks along the observations axis until the final max-pooling operation. This changes the output,
+since attention is no longer applied jointly over all observation and is an experimental feature that 
+was not properly evaluated. 
+However, it can be useful for large datasets and performed better than staying at the memory limit 
+in preliminary tests. `experimental_chunk_size` should probably be set as high as possible given the
+available memory. 
+
+- **avici 1.0.7:** `devices` and `sharding_if_possible` flags in the forward pass of
+[`AVICIModel`](avici/pretrain.py) 
+for running the inference forward pass on a specific backend (e.g. CPU)
+and automatically sharding computation on multiple devices.
+
+- **avici 1.0.6:** Requirements and README updates. 
+
+- **avici 1.0.3:** Published `scm-v0` model parameters.
+
+- **avici 1.0.0:** Release
+
+## Custom Installation and Branches
 
 When using `avici` for your research and applications, we recommend using
 the easy-to-use `main` branch and installing the latest stable
@@ -166,13 +188,6 @@ You then need to install the `avici` package with
 ```
 pip install -e .
 ```
-#### Note to Apple Silicon/M1 chip users:
-Installing the package by first setting up a conda environment
-using our conda `environment.yaml` config and then installing
-`pip install -r requirements.txt` before finally running
-`pip install -e .` works on Apple M1 MacBooks.
-Directly installing `avici` via PyPI may install incompatible versions 
-or builds of package requirements, which may cause unexpected, low-level errors.
 
 #### Reproducibility branch
 In addition to `main`, this repository also contains a `full` 
