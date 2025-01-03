@@ -97,7 +97,8 @@ class AVICIModel:
             experimental_chunk_size (int, optional): [Experimental] If 0 < `experimental_chunk_size` < `n`,
                 processes observation rows in chunks of size `experimental_chunk_size` until the max-pooling operation
                 to save memory. This changes the output, because attention is no longer applied over the all
-                observations jointly. If `experimental_chunk_size` is `None` or falls outside of this range,
+                observations jointly. `experimental_chunk_size` should probably be set as high as possible given the
+                available memory. If `experimental_chunk_size` is `None` or falls outside of this range,
                 attention is applied over the full observations axis. Defaults to `None`.
         Returns:
             `[d, d]` adjacency matrix of predicted edge probabilities
@@ -127,21 +128,15 @@ class AVICIModel:
 
         if shard_if_possible:
             device_count = len(devices)
+            assert not x.shape[0] % device_count, ("observations `n` must be divisible by `device_count` if sharding "
+                                                   "is enabled. ")
             mesh = mesh_utils.create_device_mesh((device_count,), devices)
             sharding = PositionalSharding(mesh)
             sh = sharding.reshape((device_count, 1))
 
-            # if observations cannot be sharded equally, discard the last `n mod len(devices)` observations
-            rem = x.shape[0] % device_count
-            if rem:
-                x = x[:-rem]
-                if interv is not None:
-                    interv = interv[:-rem]
-
             x = jax.device_put(x, sh)
             if interv is not None:
                 interv = jax.device_put(interv, sh)
-
         else:
             x = jax.device_put(x, devices[0])
             if interv is not None:
