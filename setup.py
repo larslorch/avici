@@ -11,7 +11,7 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.10.0',
+    python_requires='>=3.10, <3.12',
     packages=find_packages(),
     package_data={
         'avici': [
